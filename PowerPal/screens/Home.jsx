@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import {
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -10,23 +11,30 @@ import {
 import Icon from "react-native-vector-icons/AntDesign";
 import UserProfile from "../components/userProfile";
 import Search from "./Search";
+import Post from "../components/post";
+import { useState } from "react";
 
 export default function Home({ navigation }) {
+  const [posts, setPosts] = useState([]);
+  const [notifications, setNotifications] = useState([]);
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>PowerPal</Text>
         <View style={styles.headerIconsView}>
-          <Icon
-            name="hearto"
-            size={30}
-            color="#C74E53"
-            style={styles.headerIcon}
-          />
+          <View>
+            {notifications > 0 ? <View style={styles.hasNotif} /> : null}
+            <Icon
+              name="hearto"
+              size={25}
+              color="#C74E53"
+              style={styles.headerIcon}
+            />
+          </View>
           <TouchableOpacity onPress={() => navigation.navigate("Search")}>
             <Icon
               name="search1"
-              size={30}
+              size={25}
               color="#C74E53"
               style={styles.headerIcon}
             />
@@ -34,6 +42,10 @@ export default function Home({ navigation }) {
         </View>
       </View>
       <View style={styles.headerSeperator} />
+      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+        <Post postId="66a81c64518dbf6fab0ff1d2" />
+        <Post postId="66a81c64518dbf6fab0ff1d2" />
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -68,6 +80,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   headerIcon: {
-    marginLeft: 15,
+    marginLeft: 25,
+  },
+  scrollViewContainer: {
+    alignSelf: "center",
+    width: "100%",
+    maxWidth: "800px",
+  },
+  hasNotif: {
+    position: "absolute",
+    height: 13,
+    width: 13,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: "#fff",
+    backgroundColor: "#333",
+    top: 0,
+    right: -2,
+    zIndex: 1,
   },
 });

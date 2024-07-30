@@ -15,7 +15,7 @@ module.exports = {
     return Post.find().populate("userId").populate("Likes");
   },
   getPostById: async (postId) => {
-    return Post.findById(postId).populate("userId").populate("Likes");
+    return Post.findById(postId).populate("userId");
   },
   updatePost: async (postId, post) => {
     return Post.findByIdAndUpdate(postId, post, { new: true });

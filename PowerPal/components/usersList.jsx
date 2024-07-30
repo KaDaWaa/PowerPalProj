@@ -30,6 +30,7 @@ export default function UsersList({ users, navigation }) {
       data={users}
       renderItem={renderItem}
       keyExtractor={(item) => item._id}
+      style={styles.list}
     />
   );
 }
@@ -48,5 +49,10 @@ const styles = StyleSheet.create({
   userSubTitle: {
     fontSize: 14,
     color: "#777",
+  },
+  list: {
+    width: "100%",
+    maxWidth: "800px",
+    alignSelf: "center",
   },
 });

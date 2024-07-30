@@ -283,7 +283,7 @@ export default function UserProfile({
               <Text style={styles.headerText}>
                 {userProfile ? userProfile.username : null}
               </Text>
-              <Icon3 name="three-bars" size={30} color="#C74E53" />
+              <Icon3 name="three-bars" size={25} color="#C74E53" />
             </View>
           ) : (
             <View style={styles.headerSearchProfile}>
@@ -391,7 +391,7 @@ export default function UserProfile({
                 onPress={() => handleFollow()}
               >
                 <Text style={styles.buttonText}>
-                  {follow ? "Unfollow" : "Follow"}
+                  {follow ? "Following" : "Follow"}
                 </Text>
               </TouchableOpacity>
             )}
@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: Platform.OS === "web" ? "80%" : "100%",
     justifyContent: "space-between",
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
     alignItems: "center",
     flexDirection: "row",
   },
@@ -459,7 +459,7 @@ const styles = StyleSheet.create({
     color: "#C74E53",
     textAlign: "center",
     flex: 1,
-    borderWidth: 1,
+    paddingEnd: 20,
   },
   headerIcons: {
     position: "absolute",

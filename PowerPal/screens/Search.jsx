@@ -1,5 +1,6 @@
 import {
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   TextInput,
   TouchableOpacity,
@@ -12,12 +13,29 @@ import Icon3 from "react-native-vector-icons/FontAwesome6";
 import axios from "axios";
 import { useAppContext } from "../utils/appContext";
 import UsersList from "../components/usersList";
+import { Skeleton } from "@rneui/themed";
 
 export default function Search({ navigation }) {
+  const UserSkeleton = () => {
+    return (
+      <View style={styles.skeletonContainer}>
+        <Skeleton width="20%" height={20} animation="wave" />
+        <Skeleton
+          width="30%"
+          height={15}
+          animation="wave"
+          style={styles.skeletonLine}
+        />
+        <View style={styles.seperator} />
+      </View>
+    );
+  };
+
   const { apiUrl } = useAppContext();
   const [searchText, setSearchText] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [debounceTimeout, setDebounceTimeout] = useState(null);
+  const [showSkeleton, setShowSkeleton] = useState(false);
   console.log(searchResults);
 
   const handleSearch = async () => {
@@ -26,12 +44,14 @@ export default function Search({ navigation }) {
         `${apiUrl}/users/searchByName/${searchText}`
       );
       setSearchResults(response.data);
+      setShowSkeleton(false);
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
+    setShowSkeleton(true);
     if (debounceTimeout) {
       clearTimeout(debounceTimeout);
     }
@@ -39,7 +59,10 @@ export default function Search({ navigation }) {
     const newTimeout = setTimeout(() => {
       if (searchText) {
         handleSearch();
-      } else setSearchResults([]);
+      } else {
+        setSearchResults([]);
+        setShowSkeleton(false);
+      }
     }, 1000);
 
     setDebounceTimeout(newTimeout);
@@ -83,7 +106,15 @@ export default function Search({ navigation }) {
         </View>
       </View>
       <View style={styles.seperator} />
-      <UsersList users={searchResults} navigation={navigation} />
+      {showSkeleton ? (
+        <ScrollView style={styles.skeletonScrollView}>
+          {Array.from({ length: 15 }).map((_, index) => (
+            <UserSkeleton key={index} />
+          ))}
+        </ScrollView>
+      ) : (
+        <UsersList users={searchResults} navigation={navigation} />
+      )}
     </SafeAreaView>
   );
 }
@@ -133,5 +164,20 @@ const styles = StyleSheet.create({
   },
   clearButton: {
     justifyContent: "flex-end",
+  },
+  skeletonScrollView: {
+    paddingHorizontal: 10,
+    maxWidth: "800px",
+    alignSelf: "center",
+    width: "100%",
+  },
+  skeletonContainer: {
+    marginTop: 10,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+  },
+  skeletonLine: {
+    marginTop: 10,
+    marginBottom: 10,
   },
 });
