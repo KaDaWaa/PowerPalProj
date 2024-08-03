@@ -6,20 +6,26 @@ import axios from "axios";
 import Post from "./post";
 import { useEffect } from "react";
 
-export default function ProfilePosts({ userId, navigation }) {
+export default function ProfilePosts({ userId, navigation, reload }) {
   const [posts, setPosts] = useState([]);
   const { apiUrl } = useAppContext();
+  const fetchPosts = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/posts/user/${userId}`);
+      setPosts(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/posts/user/${userId}`);
-        setPosts(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
     fetchPosts();
   }, [userId]);
+  useEffect(() => {
+    if (reload) {
+      setPosts([]);
+      fetchPosts();
+    }
+  }, [reload]);
   return (
     <View style={styles.container}>
       {posts.map((post) => (

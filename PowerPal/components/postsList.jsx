@@ -5,11 +5,12 @@ import {
   View,
   ActivityIndicator,
   Text,
+  RefreshControl,
 } from "react-native";
 import React from "react";
 import Post from "./post";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAppContext } from "../utils/appContext";
 
 export default function PostsList({ userId, navigation }) {
@@ -18,31 +19,43 @@ export default function PostsList({ userId, navigation }) {
   const [loading, setLoading] = useState(false);
   const [isLastPage, setIsLastPage] = useState(false);
   const { apiUrl } = useAppContext();
+  const [refreshing, setRefreshing] = useState(false);
 
-  const fetchPosts = async () => {
-    if (loading || isLastPage) return;
-    setLoading(true);
-    try {
-      const response = await axios.get(
-        `${apiUrl}/users/followingPosts/${userId}/${page}`
-      );
-      if (response.data.length === 0) {
-        setIsLastPage(true);
-      } else {
-        setPosts((prevPosts) => [...prevPosts, ...response.data]);
+  const fetchPosts = useCallback(
+    async (reset = false) => {
+      if (loading || (isLastPage && !reset)) {
+        return;
       }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          `${apiUrl}/users/followingPosts/${userId}/${reset ? 1 : page}`
+        );
+        if (response.data.length < 5) {
+          setPosts((prevPosts) =>
+            reset ? response.data : [...prevPosts, ...response.data]
+          );
+          setIsLastPage(true);
+        } else {
+          setPosts((prevPosts) =>
+            reset ? response.data : [...prevPosts, ...response.data]
+          );
+        }
+        if (reset) {
+          setPage(1);
+          setIsLastPage(false);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [loading, isLastPage, page, apiUrl, userId]
+  );
 
   useEffect(() => {
-    setPosts([]); // Clear the posts when userId or isForProfile changes
-    setPage(1); // Reset the page to 1 when userId or isForProfile changes
-    setIsLastPage(false); // Reset the last page indicator
-    fetchPosts();
+    fetchPosts(true);
   }, [userId]);
 
   useEffect(() => {
@@ -52,13 +65,21 @@ export default function PostsList({ userId, navigation }) {
   }, [page]);
 
   const handleEndReached = () => {
-    if (!loading && !isLastPage) {
+    if (!loading && !isLastPage && !refreshing) {
       setPage((prevPage) => prevPage + 1);
     }
   };
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    setPosts([]);
+    fetchPosts(true).finally(() => {
+      setRefreshing(false);
+    });
+  };
+
   const renderFooter = () => {
-    if (loading) {
+    if (loading && !refreshing) {
       return (
         <ActivityIndicator
           size="large"
@@ -67,7 +88,7 @@ export default function PostsList({ userId, navigation }) {
         />
       );
     }
-    if (isLastPage) {
+    if (isLastPage && !refreshing) {
       return <Text style={styles.footerText}>Reached last post</Text>;
     }
     return null;
@@ -79,11 +100,14 @@ export default function PostsList({ userId, navigation }) {
         data={posts}
         renderItem={({ item }) => (
           <Post postId={item._id} navigation={navigation} />
-        )} // Assuming each post has a unique _id
-        keyExtractor={(item) => item._id.toString()} // Ensure to use a unique identifier for each item
+        )}
+        keyExtractor={(item) => item._id.toString()}
         onEndReached={handleEndReached}
-        onEndReachedThreshold={0.5} // Fetch more posts when the list is scrolled 50% from the bottom
+        onEndReachedThreshold={0.05}
         ListFooterComponent={renderFooter}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </SafeAreaView>
   );

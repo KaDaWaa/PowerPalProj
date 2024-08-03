@@ -106,4 +106,18 @@ module.exports = {
 
     return posts;
   },
+  addOrRemoveNotfication: async (userId, notificationId) => {
+    const user = await User(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    if (user.notifications.includes(notificationId)) {
+      user.notifications = user.notifications.filter(
+        (id) => id != notificationId
+      );
+    } else {
+      user.notifications.push(notificationId);
+    }
+    return user.save();
+  },
 };

@@ -25,6 +25,9 @@ module.exports = {
   },
   likePost: async (postId, userId) => {
     const post = await Post.findById(postId);
+    if (!post) {
+      return "Post not found";
+    }
     if (post.Likes.includes(userId)) {
       post.Likes = post.Likes.filter((id) => id != userId);
     } else {

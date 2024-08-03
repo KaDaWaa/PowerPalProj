@@ -12,6 +12,7 @@ import axios from "axios";
 import { useAppContext } from "../utils/appContext";
 import Icon from "react-native-vector-icons/Entypo";
 import Icon2 from "react-native-vector-icons/AntDesign";
+import { Skeleton } from "@rneui/themed";
 
 export default function Post({ postId, navigation }) {
   const { user } = useUserContext();
@@ -54,10 +55,66 @@ export default function Post({ postId, navigation }) {
     fetchPost();
   }, [postId]);
 
+  const handleLike = async () => {
+    try {
+      await axios.post(`${apiUrl}/posts/like/${postId}`);
+      setPost((prevPost) => ({
+        ...prevPost, // Added this line to keep the rest of the post data
+        Likes: [...prevPost.Likes, { userId: user._id }], // Added this line to add the user to the Likes array
+      }));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const PostSkeleton = () => {
+    return (
+      <View style={styles.skeletonContainer}>
+        <View style={styles.header}>
+          <Skeleton width={100} height={20} animation="wave" />
+        </View>
+        <View style={styles.content}>
+          <Skeleton width="20%" height={20} animation="wave" />
+          <View style={styles.set}>
+            <Skeleton width="30%" height={20} animation="wave" />
+            <Skeleton width="30%" height={20} animation="wave" />
+            <Skeleton width="30%" height={20} animation="wave" />
+          </View>
+          <View style={styles.set}>
+            <Skeleton width="30%" height={20} animation="wave" />
+            <Skeleton width="30%" height={20} animation="wave" />
+            <Skeleton width="30%" height={20} animation="wave" />
+          </View>
+        </View>
+        <View style={styles.content}>
+          <Skeleton width="20%" height={20} animation="wave" />
+          <View style={styles.set}>
+            <Skeleton width="30%" height={20} animation="wave" />
+            <Skeleton width="30%" height={20} animation="wave" />
+            <Skeleton width="30%" height={20} animation="wave" />
+          </View>
+          <View style={styles.set}>
+            <Skeleton width="30%" height={20} animation="wave" />
+            <Skeleton width="30%" height={20} animation="wave" />
+            <Skeleton width="30%" height={20} animation="wave" />
+          </View>
+        </View>
+        <View style={styles.footer}>
+          <View style={styles.likeButton}>
+            <Skeleton width={30} height={30} animation="wave" />
+          </View>
+          <Skeleton width="20%" height={15} animation="wave" />
+          <Skeleton width="50%" height={15} animation="wave" />
+          <Skeleton width="30%" height={15} animation="wave" />
+        </View>
+      </View>
+    );
+  };
+
   if (!post) {
     return (
       <View style={styles.container}>
-        <Text>Loading...</Text>
+        <PostSkeleton />
       </View>
     );
   }
@@ -98,7 +155,7 @@ export default function Post({ postId, navigation }) {
         ))}
       </View>
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.likeButton}>
+        <TouchableOpacity style={styles.likeButton} onPress={() => handleLike}>
           <Icon2 name={false ? "heart" : "hearto"} size={25} color="#C74E53" />
         </TouchableOpacity>
         <Text style={styles.likes}>{post.Likes.length} likes </Text>
@@ -196,5 +253,13 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#ccc",
     marginVertical: 10,
+  },
+  skeletonContainer: {
+    backgroundColor: "#fff",
+    width: "100%",
+    maxWidth: 800,
+    padding: 10,
+    marginVertical: 10,
+    overflow: "hidden",
   },
 });

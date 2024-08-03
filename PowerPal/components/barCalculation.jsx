@@ -21,7 +21,11 @@ export default function BarCalculation() {
   const [whitePlate, setWhitePlate] = useState(0);
   const [blackPlate, setBlackPlate] = useState(0);
   const [greyPlate, setGreyPlate] = useState(0);
-  const [totalWeight, setTotalWeight] = useState(barWeight);
+  const [useCollars, setUseCollars] = useState(true);
+
+  const [totalWeight, setTotalWeight] = useState(
+    barWeight + useCollars ? 5 : 0
+  );
   const [redSwitch, setRedSwitch] = useState(true);
   const [blueSwitch, setBlueSwitch] = useState(true);
   const [yellowSwitch, setYellowSwitch] = useState(true);
@@ -40,13 +44,13 @@ export default function BarCalculation() {
     grey: 5,
   };
 
-  const plateLoadingBarWidth = 150; // Width of the plate loading bar
+  const plateLoadingBarWidth = 150 - (useCollars ? 15 : 0); // Width of the plate loading bar
 
   useEffect(() => {
     // Calculate the plates needed to load the bar
     const calculatePlates = () => {
       const weight = parseFloat(weightInput) || 0;
-      const effectiveWeight = weight - barWeight;
+      const effectiveWeight = weight - barWeight - (useCollars ? 5 : 0);
       let remainingWeight = effectiveWeight;
 
       if (effectiveWeight <= 0) {
@@ -57,7 +61,7 @@ export default function BarCalculation() {
         setWhitePlate(0);
         setBlackPlate(0);
         setGreyPlate(0);
-        setTotalWeight(barWeight);
+        setTotalWeight(barWeight + (useCollars ? 5 : 0));
       } else {
         let totalPlateWidth = 0;
         let maxPlates = plateLoadingBarWidth / plateWidths.red;
@@ -162,7 +166,9 @@ export default function BarCalculation() {
         } else {
           setGreyPlate(0);
         }
-        setTotalWeight(effectiveWeight - remainingWeight + barWeight);
+        setTotalWeight(
+          effectiveWeight - remainingWeight + barWeight + (useCollars ? 5 : 0)
+        );
       }
     };
     calculatePlates();
@@ -175,6 +181,7 @@ export default function BarCalculation() {
     whiteSwitch,
     blackSwitch,
     greySwitch,
+    useCollars,
   ]);
 
   return (
@@ -184,20 +191,22 @@ export default function BarCalculation() {
           onPress={Platform.OS != "web" ? Keyboard.dismiss : null}
         >
           <View style={styles.content}>
-            <Text style={styles.title}>Load The Bar</Text>
+            <Text style={styles.title}>Load Your Plates</Text>
             <Text style={[styles.title, { fontSize: 16, fontWeight: "500" }]}>
-              Choose Plates
+              Choose your accessories
             </Text>
             <View style={styles.switchesContainer}>
               <View style={styles.switchContainer}>
-                <Text>Red</Text>
+                <Text style={styles.accessoriesText}>Red(25)</Text>
                 <Switch
                   value={redSwitch}
                   onValueChange={() => setRedSwitch(!redSwitch)}
-                  trackColor={{ false: "#fff", true: "red" }}
+                  trackColor={{ false: "#ccc", true: "red" }}
+                  activeThumbColor="white"
                   style={
                     Platform.OS != "web"
                       ? {
+                          transform: [{ scaleX: 0.7 }, { scaleY: 0.7 }],
                           shadowColor: "red",
                           shadowOffset: { width: 0, height: 0 },
                           shadowOpacity: 0.8,
@@ -209,14 +218,16 @@ export default function BarCalculation() {
                 />
               </View>
               <View style={styles.switchContainer}>
-                <Text>Blue</Text>
+                <Text style={styles.accessoriesText}>Blue(20)</Text>
                 <Switch
                   value={blueSwitch}
                   onValueChange={() => setBlueSwitch(!blueSwitch)}
-                  trackColor={{ false: "#fff", true: "blue" }}
+                  trackColor={{ false: "#ccc", true: "blue" }}
+                  activeThumbColor="white"
                   style={
                     Platform.OS != "web"
                       ? {
+                          transform: [{ scaleX: 0.7 }, { scaleY: 0.7 }],
                           shadowColor: "blue",
                           shadowOffset: { width: 0, height: 0 },
                           shadowOpacity: 0.8,
@@ -228,14 +239,16 @@ export default function BarCalculation() {
                 />
               </View>
               <View style={styles.switchContainer}>
-                <Text>Yellow</Text>
+                <Text style={styles.accessoriesText}>Yellow(15)</Text>
                 <Switch
                   value={yellowSwitch}
                   onValueChange={() => setYellowSwitch(!yellowSwitch)}
-                  trackColor={{ false: "#fff", true: "yellow" }}
+                  trackColor={{ false: "#ccc", true: "yellow" }}
+                  activeThumbColor="white"
                   style={
                     Platform.OS != "web"
                       ? {
+                          transform: [{ scaleX: 0.7 }, { scaleY: 0.7 }],
                           shadowColor: "yellow",
                           shadowOffset: { width: 0, height: 0 },
                           shadowOpacity: 0.8,
@@ -247,14 +260,16 @@ export default function BarCalculation() {
                 />
               </View>
               <View style={styles.switchContainer}>
-                <Text>Green</Text>
+                <Text style={styles.accessoriesText}>Green(10)</Text>
                 <Switch
                   value={greenSwitch}
                   onValueChange={() => setGreenSwitch(!greenSwitch)}
-                  trackColor={{ false: "#fff", true: "green" }}
+                  trackColor={{ false: "#ccc", true: "green" }}
+                  activeThumbColor="white"
                   style={
                     Platform.OS != "web"
                       ? {
+                          transform: [{ scaleX: 0.7 }, { scaleY: 0.7 }],
                           shadowColor: "Green",
                           shadowOffset: { width: 0, height: 0 },
                           shadowOpacity: 0.8,
@@ -266,15 +281,17 @@ export default function BarCalculation() {
                 />
               </View>
               <View style={styles.switchContainer}>
-                <Text>White</Text>
+                <Text style={styles.accessoriesText}>White(5)</Text>
                 <Switch
                   value={whiteSwitch}
                   onValueChange={() => setWhiteSwitch(!whiteSwitch)}
-                  trackColor={{ false: "#fff", true: "#eee" }}
+                  trackColor={{ false: "#ccc", true: "#eee" }}
                   thumbColor={whiteSwitch ? "#333" : "#fff"}
+                  activeThumbColor="white"
                   style={
                     Platform.OS != "web"
                       ? {
+                          transform: [{ scaleX: 0.7 }, { scaleY: 0.7 }],
                           shadowColor: "#eee",
                           shadowOffset: { width: 0, height: 0 },
                           shadowOpacity: 0.8,
@@ -286,14 +303,16 @@ export default function BarCalculation() {
                 />
               </View>
               <View style={styles.switchContainer}>
-                <Text>Black</Text>
+                <Text style={styles.accessoriesText}>Black(2.5)</Text>
                 <Switch
                   value={blackSwitch}
                   onValueChange={() => setBlackSwitch(!blackSwitch)}
-                  trackColor={{ false: "#fff", true: "black" }}
+                  trackColor={{ false: "#ccc", true: "black" }}
+                  activeThumbColor="white"
                   style={
                     Platform.OS != "web"
                       ? {
+                          transform: [{ scaleX: 0.7 }, { scaleY: 0.7 }],
                           shadowColor: "black",
                           shadowOffset: { width: 0, height: 0 },
                           shadowOpacity: 0.8,
@@ -305,14 +324,37 @@ export default function BarCalculation() {
                 />
               </View>
               <View style={styles.switchContainer}>
-                <Text>Grey</Text>
+                <Text style={styles.accessoriesText}>Grey(1.25)</Text>
                 <Switch
                   value={greySwitch}
                   onValueChange={() => setGreySwitch(!greySwitch)}
-                  trackColor={{ false: "#fff", true: "#777" }}
+                  trackColor={{ false: "#ccc", true: "#777" }}
+                  activeThumbColor="white"
                   style={
                     Platform.OS != "web"
                       ? {
+                          transform: [{ scaleX: 0.7 }, { scaleY: 0.7 }],
+                          shadowColor: "grey",
+                          shadowOffset: { width: 0, height: 0 },
+                          shadowOpacity: 0.8,
+                          shadowRadius: 3,
+                          elevation: 5,
+                        }
+                      : {}
+                  }
+                />
+              </View>
+              <View style={styles.switchContainer}>
+                <Text style={styles.accessoriesText}>Collars (5 KG)</Text>
+                <Switch
+                  value={useCollars}
+                  onValueChange={() => setUseCollars(!useCollars)}
+                  trackColor={{ false: "#ccc", true: "#eee" }}
+                  activeThumbColor="white"
+                  style={
+                    Platform.OS != "web"
+                      ? {
+                          transform: [{ scaleX: 0.7 }, { scaleY: 0.7 }],
                           shadowColor: "grey",
                           shadowOffset: { width: 0, height: 0 },
                           shadowOpacity: 0.8,
@@ -353,6 +395,12 @@ export default function BarCalculation() {
                 {[...Array(greyPlate)].map((_, index) => (
                   <View key={index} style={[styles.plate, styles.greyPlate]} />
                 ))}
+                {useCollars ? (
+                  <View style={styles.collarContainer}>
+                    <View style={styles.collarRing} />
+                    <View style={styles.collarHandle} />
+                  </View>
+                ) : null}
               </View>
             </View>
             <View style={styles.weightInputContainer}>
@@ -373,48 +421,146 @@ export default function BarCalculation() {
             </Text>
 
             <View style={styles.plateSummary}>
-              <Text style={styles.summaryTitle}>Set of Plates Needed</Text>
+              <View style={styles.summaryTextContainer}>
+                <Text style={styles.summaryTitle}>Set of Plates Needed</Text>
+              </View>
+              <View style={styles.platesSummaryContainers}>
+                <View style={styles.summaryBox}>
+                  <View
+                    style={[
+                      styles.summaryBoxHighlight,
+                      { backgroundColor: "#ccc" },
+                    ]}
+                  />
+                  <Text style={styles.summaryBoxText}>
+                    {useCollars ? 25 : 20}
+                  </Text>
+                  <Text style={styles.summaryBoxSubText}>KG</Text>
+                  <View style={styles.summaryBoxSeperator} />
+                  <Text style={styles.plateSummaryText}>Bar</Text>
+                </View>
 
-              <Text style={styles.plateSummaryText}>Bar</Text>
+                {redPlate > 0 ? (
+                  <View style={styles.summaryBox}>
+                    <View
+                      style={[
+                        styles.summaryBoxHighlight,
+                        { backgroundColor: "red" },
+                      ]}
+                    />
+                    <Text style={styles.summaryBoxText}>25</Text>
+                    <Text style={styles.summaryBoxSubText}>KG</Text>
+                    <View style={styles.summaryBoxSeperator} />
+                    <Text style={styles.plateSummaryText}>{redPlate}</Text>
+                  </View>
+                ) : null}
 
-              {redPlate > 0 ? (
-                <Text style={styles.plateSummaryText}>Red: {redPlate}</Text>
-              ) : null}
+                {bluePlate > 0 ? (
+                  <View style={styles.summaryBox}>
+                    <View
+                      style={[
+                        styles.summaryBoxHighlight,
+                        { backgroundColor: "blue" },
+                      ]}
+                    />
+                    <Text style={styles.summaryBoxText}>20</Text>
+                    <Text style={styles.summaryBoxSubText}>KG</Text>
+                    <View style={styles.summaryBoxSeperator} />
+                    <Text style={styles.plateSummaryText}>{bluePlate}</Text>
+                  </View>
+                ) : null}
+                {yellowPlate > 0 ? (
+                  <View style={styles.summaryBox}>
+                    <View
+                      style={[
+                        styles.summaryBoxHighlight,
+                        { backgroundColor: "yellow" },
+                      ]}
+                    />
+                    <Text style={styles.summaryBoxText}>15</Text>
+                    <Text style={styles.summaryBoxSubText}>KG</Text>
+                    <View style={styles.summaryBoxSeperator} />
+                    <Text style={styles.plateSummaryText}>{yellowPlate}</Text>
+                  </View>
+                ) : null}
+                {greenPlate > 0 ? (
+                  <View style={styles.summaryBox}>
+                    <View
+                      style={[
+                        styles.summaryBoxHighlight,
+                        { backgroundColor: "green" },
+                      ]}
+                    />
+                    <Text style={styles.summaryBoxText}>10</Text>
+                    <Text style={styles.summaryBoxSubText}>KG</Text>
+                    <View style={styles.summaryBoxSeperator} />
+                    <Text style={styles.plateSummaryText}>{greenPlate}</Text>
+                  </View>
+                ) : null}
+                {whitePlate > 0 ? (
+                  <View style={styles.summaryBox}>
+                    <View
+                      style={[
+                        styles.summaryBoxHighlight,
+                        { backgroundColor: "#eee" },
+                      ]}
+                    />
+                    <Text style={styles.summaryBoxText}>5</Text>
+                    <Text style={styles.summaryBoxSubText}>KG</Text>
+                    <View style={styles.summaryBoxSeperator} />
+                    <Text style={styles.plateSummaryText}>{whitePlate}</Text>
+                  </View>
+                ) : null}
+                {blackPlate > 0 ? (
+                  <View style={styles.summaryBox}>
+                    <View
+                      style={[
+                        styles.summaryBoxHighlight,
+                        { backgroundColor: "#222" },
+                      ]}
+                    />
+                    <Text style={styles.summaryBoxText}>2.5</Text>
+                    <Text style={styles.summaryBoxSubText}>KG</Text>
+                    <View style={styles.summaryBoxSeperator} />
+                    <Text style={styles.plateSummaryText}>{blackPlate}</Text>
+                  </View>
+                ) : null}
+                {greyPlate > 0 ? (
+                  <View style={styles.summaryBox}>
+                    <View
+                      style={[
+                        styles.summaryBoxHighlight,
+                        { backgroundColor: "grey" },
+                      ]}
+                    />
+                    <Text style={styles.summaryBoxText}>1.25</Text>
+                    <Text style={styles.summaryBoxSubText}>KG</Text>
+                    <View style={styles.summaryBoxSeperator} />
+                    <Text style={styles.plateSummaryText}>{greyPlate}</Text>
+                  </View>
+                ) : null}
+              </View>
 
-              {bluePlate > 0 ? (
-                <Text style={styles.plateSummaryText}>Blue: {bluePlate}</Text>
-              ) : null}
-              {yellowPlate > 0 ? (
-                <Text style={styles.plateSummaryText}>
-                  Yellow: {yellowPlate}
-                </Text>
-              ) : null}
-              {greenPlate > 0 ? (
-                <Text style={styles.plateSummaryText}>Green: {greenPlate}</Text>
-              ) : null}
-              {whitePlate > 0 ? (
-                <Text style={styles.plateSummaryText}>White: {whitePlate}</Text>
-              ) : null}
-              {blackPlate > 0 ? (
-                <Text style={styles.plateSummaryText}>Black: {blackPlate}</Text>
-              ) : null}
-              {greyPlate > 0 ? (
-                <Text style={styles.plateSummaryText}>Grey: {greyPlate}</Text>
-              ) : null}
+              <Text style={[styles.summaryBoxSubText, { bottom: -15 }]}>
+                {useCollars ? "Bar+Collars=25" : ""}
+              </Text>
             </View>
+
             <Text style={styles.quickMaths}>
               <Text style={[styles.quickMaths, { fontWeight: "bold" }]}>
                 {" "}
                 Quick Maths:
               </Text>{" "}
-              20{redPlate > 0 ? "+" + parseFloat(redPlate) * 2 + "x25" : ""}
-              {bluePlate > 0 ? "+" + parseFloat(bluePlate) * 2 + "x20" : ""}
-              {yellowPlate > 0 ? "+" + parseFloat(yellowPlate) * 2 + "x15" : ""}
-              {greenPlate > 0 ? "+" + parseFloat(greenPlate) * 2 + "x10" : ""}
-              {whitePlate > 0 ? "+" + parseFloat(whitePlate) * 2 + "x5" : ""}
-              {blackPlate > 0 ? "+" + parseFloat(blackPlate) * 2 + "x2.5" : ""}
-              {greyPlate > 0 ? "+" + parseFloat(greyPlate) * 2 + "x1.25" : ""} ≈
-              {totalWeight} KG
+              {useCollars ? "25" : "20"}
+              {redPlate > 0 ? "+" + parseFloat(redPlate) * 2 * 25 : ""}
+              {bluePlate > 0 ? "+" + parseFloat(bluePlate) * 2 * 20 : ""}
+              {yellowPlate > 0 ? "+" + parseFloat(yellowPlate) * 2 * 15 : ""}
+              {greenPlate > 0 ? "+" + parseFloat(greenPlate) * 2 * 10 : ""}
+              {whitePlate > 0 ? "+" + parseFloat(whitePlate) * 2 * 5 : ""}
+              {blackPlate > 0 ? "+" + parseFloat(blackPlate) * 2 * 2.5 : ""}
+              {greyPlate > 0
+                ? "+" + parseFloat(greyPlate) * 2 * 1.25
+                : ""} ≈ {totalWeight} KG
             </Text>
           </View>
         </TouchableWithoutFeedback>
@@ -444,6 +590,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 20,
+    width: "70%",
   },
   bar: {
     width: 100,
@@ -522,26 +669,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginVertical: 10,
   },
-  plateSummary: {
-    flexDirection: "column",
-    justifyContent: "center",
-    width: "80%",
-    backgroundColor: "#efefef",
-    padding: 10,
-    height: 120,
-    marginVertical: 10,
-    maxHeight: 200,
-    borderRadius: 10,
-    flexWrap: "wrap",
-  },
-  plateSummaryText: {
-    fontSize: 16,
-  },
-  summaryTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
   quickMaths: {
     fontSize: 16,
     marginVertical: 20,
@@ -572,5 +699,119 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     margin: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+    color: "#C74E53",
+  },
+  barRing: {
+    height: 25,
+    width: 8,
+    backgroundColor: "#ccc",
+    borderWidth: 1,
+    borderColor: "#333",
+    borderRadius: 2,
+  },
+  platesContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  plateLoadingBar: {
+    width: 150,
+    height: 18,
+    backgroundColor: "#ccc",
+    borderWidth: 1,
+    borderColor: "#333",
+    borderEndEndRadius: 2,
+    borderTopEndRadius: 2,
+    position: "absolute",
+    zIndex: -1,
+    borderLeftWidth: 0,
+  },
+
+  plateSummary: {
+    flexDirection: "column",
+    alignItems: "center",
+    width: "80%",
+    backgroundColor: "#f8f8f8",
+    padding: 10,
+    height: 150,
+    marginVertical: 10,
+    borderRadius: 10,
+    flexWrap: "wrap",
+  },
+  plateSummaryText: {
+    fontSize: 18,
+  },
+  summaryTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  summaryTextContainer: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
+  },
+  platesSummaryContainers: {
+    flexDirection: "row",
+  },
+  summaryBox: {
+    alignItems: "center",
+    flexDirection: "column",
+    width: 40,
+    height: 65,
+  },
+  summaryBoxHighlight: {
+    width: "100%",
+    height: 8,
+  },
+  summaryBoxText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  summaryBoxSubText: {
+    fontSize: 10,
+  },
+  summaryBoxSeperator: {
+    height: 1,
+    width: "100%",
+    backgroundColor: "#ccc",
+  },
+
+  collarContainer: {
+    justifyContent: "center",
+    height: 35,
+  },
+  collarRing: {
+    height: 35,
+    width: 15,
+    //position: "relative",
+    backgroundColor: "#eee",
+    borderWidth: 1,
+    borderColor: "#333",
+    borderRadius: 2,
+    //zIndex: 0,
+    top: 2.5,
+  },
+  collarHandle: {
+    width: 35,
+    height: 5,
+    backgroundColor: "#eee",
+    // position: "relative",
+    // alignSelf: "center",
+    transform: [{ rotate: "-45deg" }],
+    top: -28,
+    borderWidth: 1,
+    borderColor: "#333",
+    borderStartWidth: 0,
+    borderTopEndRadius: 2,
+    borderBottomEndRadius: 2,
+    //zIndex: 1,
+  },
+  accessoriesText: {
+    fontSize: 10,
   },
 });

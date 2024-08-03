@@ -402,7 +402,11 @@ export default function UserProfile({
             )}
           </View>
           <View style={styles.seperator} />
-          <ProfilePosts userId={userProfile._id} navigation={navigation} />
+          <ProfilePosts
+            userId={userProfile._id}
+            navigation={navigation}
+            reload={refreshing}
+          />
         </SafeAreaView>
       </ScrollView>
     </SafeAreaView>

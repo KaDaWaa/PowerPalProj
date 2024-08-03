@@ -194,11 +194,10 @@ export default AddWorkoutForm = () => {
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
           <ScrollView
             showsVerticalScrollIndicator={false}
-            style={styles.scrollView}
-            contentContainerStyle={styles.scrollViewContent}
+            contentContainerStyle={styles.scrollView}
           >
             {exercises.map((exercise, exerciseIndex) => (
-              <View key={exerciseIndex}>
+              <View key={exerciseIndex} style={styles.excercise}>
                 <View style={styles.exerciseHeader}>
                   <TextInput
                     style={[
@@ -214,6 +213,7 @@ export default AddWorkoutForm = () => {
                   {exerciseIndex != 0 ? (
                     <TouchableOpacity
                       onPress={() => deleteExercise(exerciseIndex)}
+                      styles={{ width: "20%", borderWidth: 1 }}
                     >
                       <Icon name="xmark" size={20} color="#C74E53" />
                     </TouchableOpacity>
@@ -393,6 +393,11 @@ const styles = StyleSheet.create({
   },
   errorInput: {
     borderColor: "#C74E53",
+  },
+  excercise: {
+    width: "100%",
+    maxWidth: 400,
+    marginBottom: 10,
   },
   exerciseHeader: {
     width: "90%",

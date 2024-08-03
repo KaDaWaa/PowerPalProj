@@ -13,7 +13,6 @@ export default function UsersList({ users, navigation }) {
       <TouchableOpacity
         style={styles.userButton}
         onPress={() => {
-          console.log("Navigating to user profile with ID:", item._id);
           navigation.navigate("UserProfile", {
             userId: item._id,
             isMyProfile: false,
