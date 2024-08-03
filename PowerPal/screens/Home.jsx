@@ -1,18 +1,12 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React from "react";
+import React, { useState } from "react";
 import {
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
-import UserProfile from "../components/userProfile";
-import Search from "./Search";
-import Post from "../components/post";
-import { useState } from "react";
 import PostsList from "../components/postsList";
 import { useUserContext } from "../utils/userContext";
 

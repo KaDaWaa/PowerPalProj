@@ -700,37 +700,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 10,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    color: "#C74E53",
-  },
-  barRing: {
-    height: 25,
-    width: 8,
-    backgroundColor: "#ccc",
-    borderWidth: 1,
-    borderColor: "#333",
-    borderRadius: 2,
-  },
-  platesContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  plateLoadingBar: {
-    width: 150,
-    height: 18,
-    backgroundColor: "#ccc",
-    borderWidth: 1,
-    borderColor: "#333",
-    borderEndEndRadius: 2,
-    borderTopEndRadius: 2,
-    position: "absolute",
-    zIndex: -1,
-    borderLeftWidth: 0,
-  },
-
   plateSummary: {
     flexDirection: "column",
     alignItems: "center",
