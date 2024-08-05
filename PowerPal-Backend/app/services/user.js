@@ -88,17 +88,19 @@ module.exports = {
         targetId
       );
       if (notif) {
-        await addOrRemoveNotfication(targetId, notif._id);
+        await this.addOrRemoveNotification(targetId, notif._id);
         await deleteFollowNotification(userId, targetId);
       }
     } else {
+      console.log("adding");
       user.following.push(targetId);
       target.followers.push(userId);
-      const notif = createFollowNotification({
+      const notif = await createFollowNotification({
         reciever: targetId,
         sender: userId,
       });
-      addOrRemoveNotfication(targetId, notif._id);
+      console.log(notif);
+      await this.addOrRemoveNotification(targetId, notif._id);
     }
     await user.save();
     return target.save();
@@ -141,6 +143,7 @@ module.exports = {
       );
       console.log(user.notifications);
     } else {
+      console.log("adding");
       user.notifications.push(notificationId);
     }
     return user.save();
