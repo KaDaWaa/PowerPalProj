@@ -11,7 +11,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StyleSheet } from "react-native";
 import AddWorkout from "./screens/AddWorkout";
 import Caclulator from "./screens/Calculator";
-import Community from "./screens/Community";
 import Home from "./screens/Home";
 import Login from "./screens/login";
 import Profile from "./screens/Profile";
@@ -23,16 +22,18 @@ const homeStack = createNativeStackNavigator();
 import { StatusBar, statusBarStyle } from "react-native";
 import Search from "./screens/Search";
 import UserProfile from "./components/userProfile";
+import NotificationsPage from "./screens/NotificationsPage";
 
 function MyStack() {
   return (
     <homeStack.Navigator
       initialRouteName="Home"
-      screenOptions={{ headerShown: false}}
+      screenOptions={{ headerShown: false }}
     >
       <homeStack.Screen name="Home" component={Home} />
       <homeStack.Screen name="Search" component={Search} />
       <homeStack.Screen name="UserProfile" component={UserProfile} />
+      <homeStack.Screen name="Notifications" component={NotificationsPage} />
     </homeStack.Navigator>
   );
 }
@@ -57,16 +58,6 @@ function MyTabs() {
         }}
       />
       <myTabs.Screen
-        name="Calculate"
-        component={Caclulator}
-        options={{
-          title: "Calculate",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="calculate" size={size} color={color} />
-          ),
-        }}
-      />
-      <myTabs.Screen
         name="Add workout"
         component={AddWorkout}
         options={{
@@ -77,12 +68,12 @@ function MyTabs() {
         }}
       />
       <myTabs.Screen
-        name="Community"
-        component={Community}
+        name="Calculate"
+        component={Caclulator}
         options={{
-          title: "Community",
+          title: "Calculate",
           tabBarIcon: ({ color, size }) => (
-            <FontAwesome5 name="user-friends" size={size} color={color} />
+            <MaterialIcons name="calculate" size={size} color={color} />
           ),
         }}
       />
@@ -108,7 +99,7 @@ export default function App() {
           <StatusBar animated={true} barStyle={"dark-content"} />
           <Stack.Navigator
             initialRouteName="loginPage"
-            screenOptions={{ headerShown: false  ,gestureEnabled:false}}
+            screenOptions={{ headerShown: false, gestureEnabled: false }}
             gesture
           >
             <Stack.Screen name="loginPage" component={Login} />

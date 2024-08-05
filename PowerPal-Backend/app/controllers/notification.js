@@ -1,6 +1,7 @@
 const {
   getNotificationsByUserId,
   markAllAsRead,
+  isAllRead,
 } = require("../services/notification");
 
 module.exports = {
@@ -16,6 +17,16 @@ module.exports = {
     try {
       await markAllAsRead(req.params.userId);
       res.json("All notifications marked as read");
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+  isAllRead: async (req, res) => {
+    try {
+      const count = (await isAllRead(req.params.userId)).length;
+      if (count === 0) {
+        res.json(true);
+      } else res.json(false);
     } catch (err) {
       res.status(500).json(err);
     }

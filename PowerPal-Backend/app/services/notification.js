@@ -19,9 +19,7 @@ module.exports = {
   },
   getNotificationsByUserId: async (userId) => {
     return Notification.find({ reciever: userId })
-      .populate("reciever")
       .populate("sender")
-      .populate("postId")
       .sort({ createdAt: -1 });
   },
   markAllAsRead: async (userId) => {
@@ -34,9 +32,9 @@ module.exports = {
       type: "like",
     });
   },
-  getFollowNotificationBySenderAndReciever: async (senderId,recieverId ) => {
+  getFollowNotificationBySenderAndReciever: async (senderId, recieverId) => {
     return Notification.findOne({
-      reciever:recieverId,
+      reciever: recieverId,
       sender: senderId,
       type: "follow",
     });
@@ -50,5 +48,8 @@ module.exports = {
       reciever: recieverId,
       type: "follow",
     });
+  },
+  isAllRead: async (userId) => {
+    return Notification.find({ reciever: userId, read: false });
   },
 };

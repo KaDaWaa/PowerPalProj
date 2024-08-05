@@ -39,22 +39,28 @@ module.exports = {
 
     if (userLiked) {
       post.Likes = post.Likes.filter((id) => id != userId);
-      const notif = await getLikeNotificationBySenderAndPostId(userId, postId);
-      console.log(notif);
-      if (notif) {
-        await addOrRemoveNotification(notif.reciever, notif._id);
-        await deleteLikeNotification(notif._id);
+      if (userId != post.userId) {
+        const notif = await getLikeNotificationBySenderAndPostId(
+          userId,
+          postId
+        );
+        if (notif) {
+          await addOrRemoveNotification(notif.reciever, notif._id);
+          await deleteLikeNotification(notif._id);
+        }
       }
     } else {
       post.Likes.push(userId);
-      const notif = await createLikeNotification({
-        reciever: post.userId,
-        sender: userId,
-        postId: postId,
-      });
-      await addOrRemoveNotification(notif.reciever, notif._id);
+      if (userId != post.userId) {
+        const notif = await createLikeNotification({
+          reciever: post.userId,
+          sender: userId,
+          postId: postId,
+        });
+        await addOrRemoveNotification(notif.reciever, notif._id);
+      }
     }
-    return post.save();
+    return (await post.save()).populate("userId");
   },
   getPostsByUserId: async (userId) => {
     return Post.find({ userId: userId })

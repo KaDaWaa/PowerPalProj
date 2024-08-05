@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -9,24 +9,58 @@ import {
 import Icon from "react-native-vector-icons/AntDesign";
 import PostsList from "../components/postsList";
 import { useUserContext } from "../utils/userContext";
+import axios from "axios";
+import { useAppContext } from "../utils/appContext";
 
 export default function Home({ navigation }) {
   const { user } = useUserContext();
-  const [notifications, setNotifications] = useState([]);
+  const { apiUrl } = useAppContext();
+  const [allNotificationRead, setAllNotificationRead] = useState(true);
+  const [refreshHome, setRefreshHome] = useState(false);
+  const checkNotifications = async () => {
+    try {
+      const response = await axios.get(
+        `${apiUrl}/notifications/isAllRead/${user._id}`
+      );
+      if (response.data === false) {
+        setAllNotificationRead(false);
+      } else {
+        setAllNotificationRead(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    checkNotifications();
+  }, [user]);
+
+  useEffect(() => {
+    if (refreshHome) {
+      checkNotifications();
+    }
+  }, [refreshHome]);
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>PowerPal</Text>
         <View style={styles.headerIconsView}>
-          <View>
-            {notifications > 0 ? <View style={styles.hasNotif} /> : null}
-            <Icon
-              name="hearto"
-              size={25}
-              color="#C74E53"
-              style={styles.headerIcon}
-            />
-          </View>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("Notifications");
+              setAllNotificationRead(true);
+            }}
+          >
+            <View>
+              {!allNotificationRead ? <View style={styles.hasNotif} /> : null}
+              <Icon
+                name="hearto"
+                size={25}
+                color="#C74E53"
+                style={styles.headerIcon}
+              />
+            </View>
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("Search")}>
             <Icon
               name="search1"
@@ -38,7 +72,11 @@ export default function Home({ navigation }) {
         </View>
       </View>
       <View style={styles.headerSeperator} />
-      <PostsList userId={user._id} navigation={navigation} />
+      <PostsList
+        userId={user._id}
+        navigation={navigation}
+        setRefreshHome={setRefreshHome}
+      />
     </SafeAreaView>
   );
 }

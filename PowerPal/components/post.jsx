@@ -63,7 +63,6 @@ export default function Post({ postId, navigation }) {
       const response = await axios.put(
         `${apiUrl}/posts/like/${postId}/${user._id}`
       );
-      console.log(response.data);
       setPost(response.data);
     } catch (error) {
       console.error(error);

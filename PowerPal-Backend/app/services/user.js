@@ -73,38 +73,66 @@ module.exports = {
   findUserById: async (userId) => {
     return User.findById(userId);
   },
+
   followUser: async (userId, targetId) => {
+    try {
+      let user = await User.findById(userId);
+      let target = await User.findById(targetId);
+
+      if (!user || !target) {
+        throw new Error("User not found");
+      }
+
+      if (user.following.includes(targetId.toString())) {
+        user.following = user.following.filter(
+          (id) => id.toString() !== targetId.toString()
+        );
+
+        const notif = await getFollowNotificationBySenderAndReciever(
+          userId,
+          targetId
+        );
+        if (notif) {
+          target = await module.exports.addOrRemoveNotification(
+            targetId,
+            notif._id
+          );
+          await deleteFollowNotification(userId, targetId);
+        }
+        target.followers = target.followers.filter(
+          (id) => id.toString() !== userId.toString()
+        );
+      } else {
+        user.following.push(targetId);
+        target.followers.push(userId);
+
+        const notif = await createFollowNotification({
+          reciever: targetId,
+          sender: userId,
+        });
+        await module.exports.addOrRemoveNotification(targetId, notif._id);
+      }
+
+      await user.save();
+      return target.save();
+    } catch (error) {
+      console.error("Error in followUser function:", error);
+      throw error;
+    }
+  },
+  addOrRemoveNotification: async (userId, notificationId) => {
     const user = await User.findById(userId);
-    const target = await User.findById(targetId);
-    if (!user || !target) {
+    if (!user) {
       throw new Error("User not found");
     }
-    console.log(userId, targetId);
-    if (user.following.includes(targetId)) {
-      console.log("removing follow");
-      user.following = user.following.filter((id) => id != targetId);
-      target.followers = target.followers.filter((id) => id != userId);
-      const notif = await getFollowNotificationBySenderAndReciever(
-        userId,
-        targetId
+    if (user.notifications.includes(notificationId)) {
+      user.notifications = user.notifications.filter(
+        (id) => id.toString() != notificationId.toString()
       );
-      if (notif) {
-        await module.exports.addOrRemoveNotification(targetId, notif._id);
-        await deleteFollowNotification(userId, targetId);
-      }
     } else {
-      console.log("adding follow");
-      user.following.push(targetId);
-      target.followers.push(userId);
-      const notif = await createFollowNotification({
-        reciever: targetId,
-        sender: userId,
-      });
-      console.log(notif);
-      await module.exports.addOrRemoveNotification(targetId, notif._id);
+      user.notifications.push(notificationId);
     }
-    await user.save();
-    return target.save();
+    return user.save();
   },
   updateUser: async (userId, name, bio, achievements) => {
     const user = await User.findById(userId);
@@ -130,23 +158,5 @@ module.exports = {
       .populate("userId"); // Populate userId field to include user details
 
     return posts;
-  },
-  addOrRemoveNotification: async (userId, notificationId) => {
-    //console.log(userId, notificationId);
-    const user = await User.findById(userId);
-    if (!user) {
-      throw new Error("User not found");
-    }
-    if (user.notifications.includes(notificationId)) {
-      console.log("removing");
-      user.notifications = user.notifications.filter(
-        (id) => id.toString() != notificationId.toString()
-      );
-      console.log(user.notifications);
-    } else {
-      console.log("adding");
-      user.notifications.push(notificationId);
-    }
-    return user.save();
   },
 };

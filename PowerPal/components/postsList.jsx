@@ -13,7 +13,7 @@ import axios from "axios";
 import { useState, useEffect, useCallback } from "react";
 import { useAppContext } from "../utils/appContext";
 
-export default function PostsList({ userId, navigation }) {
+export default function PostsList({ userId, navigation, setRefreshHome }) {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -72,9 +72,11 @@ export default function PostsList({ userId, navigation }) {
 
   const onRefresh = () => {
     setRefreshing(true);
+    setRefreshHome(true);
     setPosts([]);
     fetchPosts(true).finally(() => {
       setRefreshing(false);
+      setRefreshHome(false);
     });
   };
 

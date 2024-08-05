@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { post } = require("..");
 const { Schema, model } = mongoose;
 
 const notificationSchema = new Schema({

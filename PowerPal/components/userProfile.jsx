@@ -1,34 +1,30 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Animated,
+  Keyboard,
+  KeyboardAvoidingView,
+  Modal,
   Platform,
+  RefreshControl,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  View,
-  RefreshControl,
-  Modal,
   TextInput,
-  KeyboardAvoidingView,
+  TouchableOpacity,
   TouchableWithoutFeedback,
-  Keyboard,
+  View,
 } from "react-native";
 import Icon2 from "react-native-vector-icons/AntDesign";
-import Icon from "react-native-vector-icons/Entypo";
-import Icon3 from "react-native-vector-icons/Octicons";
 import Icon4 from "react-native-vector-icons/FontAwesome5";
-import Icon5 from "react-native-vector-icons/MaterialIcons";
 import Icon6 from "react-native-vector-icons/Ionicons";
+import Icon5 from "react-native-vector-icons/MaterialIcons";
 import { useAppContext } from "../utils/appContext";
 import { useUserContext } from "../utils/userContext";
-import PostsList from "./postsList";
 import ProfilePosts from "./profilePosts";
-import Post from "./post";
 
 export default function UserProfile({
   route,
@@ -438,7 +434,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   header: {
-    height: 50,
+    height: 60,
     width: Platform.OS === "web" ? "80%" : "100%",
     justifyContent: "space-between",
     paddingHorizontal: 20,
@@ -446,12 +442,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   headerSearchProfile: {
-    height: 50,
+    height: 60,
     width: Platform.OS === "web" ? "80%" : "100%",
     paddingHorizontal: 10,
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
+    maxWidth: "800px",
+    alignSelf: "center",
   },
   headerText: {
     fontSize: 24,
