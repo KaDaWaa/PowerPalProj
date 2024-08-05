@@ -43,12 +43,12 @@ export default AddWorkoutForm = () => {
   const handleSetChange = (exerciseIndex, setIndex, field, value) => {
     const newExercises = [...exercises];
     if (field === "reps" || field === "weight") {
-      value = value.replace(/[^0-9]/g, ""); // Filter out non-numeric characters
+      value = value.replace(/[^0-9].[^0-9]/g, ""); // Filter out non-numeric characters
     }
     if (field === "rpe") {
       const numericValue = parseInt(value, 10);
       if (numericValue < 0 || numericValue > 10) {
-        value = ""; // Ensure RPE is between 0 and 10
+        value = "0"; // Ensure RPE is between 0 and 10
       }
     }
     newExercises[exerciseIndex].sets[setIndex][field] = value;
@@ -191,7 +191,9 @@ export default AddWorkoutForm = () => {
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <TouchableWithoutFeedback
+          onPress={() => (Platform.OS != "web" ? Keyboard.dismiss() : null)}
+        >
           <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.scrollView}
@@ -284,6 +286,8 @@ export default AddWorkoutForm = () => {
                             "rpe",
                             value
                           );
+                        } else if (value === "") {
+                          handleSetChange(exerciseIndex, setIndex, "rpe", "");
                         }
                       }}
                       keyboardType="numeric"
@@ -347,7 +351,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalText: {
     marginBottom: 15,
