@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const {
   createFollowNotification,
   deleteFollowNotification,
-  getFollowNotificationBySenderAndPostId,
+  getFollowNotificationBySenderAndReciever,
 } = require("./notification");
 
 module.exports = {
@@ -81,18 +81,19 @@ module.exports = {
     }
     console.log(userId, targetId);
     if (user.following.includes(targetId)) {
+      console.log("removing follow");
       user.following = user.following.filter((id) => id != targetId);
       target.followers = target.followers.filter((id) => id != userId);
-      const notif = await getFollowNotificationBySenderAndPostId(
+      const notif = await getFollowNotificationBySenderAndReciever(
         userId,
         targetId
       );
       if (notif) {
-        await this.addOrRemoveNotification(targetId, notif._id);
+        await module.exports.addOrRemoveNotification(targetId, notif._id);
         await deleteFollowNotification(userId, targetId);
       }
     } else {
-      console.log("adding");
+      console.log("adding follow");
       user.following.push(targetId);
       target.followers.push(userId);
       const notif = await createFollowNotification({
@@ -100,7 +101,7 @@ module.exports = {
         sender: userId,
       });
       console.log(notif);
-      await this.addOrRemoveNotification(targetId, notif._id);
+      await module.exports.addOrRemoveNotification(targetId, notif._id);
     }
     await user.save();
     return target.save();
@@ -131,7 +132,7 @@ module.exports = {
     return posts;
   },
   addOrRemoveNotification: async (userId, notificationId) => {
-    console.log(userId, notificationId);
+    //console.log(userId, notificationId);
     const user = await User.findById(userId);
     if (!user) {
       throw new Error("User not found");

@@ -1,5 +1,4 @@
 const Post = require("../models/post");
-const Notification = require("../models/notification");
 const {
   createLikeNotification,
   createFollowNotification,
@@ -8,7 +7,6 @@ const {
 } = require("./notification");
 
 const { addOrRemoveNotification } = require("./user");
-const user = require("./user");
 
 module.exports = {
   createPost: async (post) => {

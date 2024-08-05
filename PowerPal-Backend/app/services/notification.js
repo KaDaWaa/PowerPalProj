@@ -34,9 +34,9 @@ module.exports = {
       type: "like",
     });
   },
-  getFollowNotificationBySenderAndPostId: async (senderId, postId) => {
+  getFollowNotificationBySenderAndReciever: async (senderId,recieverId ) => {
     return Notification.findOne({
-      postId: postId,
+      reciever:recieverId,
       sender: senderId,
       type: "follow",
     });

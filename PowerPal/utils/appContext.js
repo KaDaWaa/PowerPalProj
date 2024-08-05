@@ -4,7 +4,7 @@ const appContext = createContext(null);
 
 export default function AppProvider({ children }) {
   const [apiUrl, setApiUrl] = useState(
-    "https://09d12br8-3001.euw.devtunnels.ms/api"
+    "https://92x144ql-3001.euw.devtunnels.ms/api"
   );
   const [loading, setLoading] = useState(false);
 
