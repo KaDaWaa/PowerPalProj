@@ -61,7 +61,7 @@ module.exports = {
   },
   likePost: async (req, res) => {
     try {
-      const post = await likePost(req.params.id, req.body.userId);
+      const post = await likePost(req.params.id, req.params.userId);
       res.json(post);
     } catch (err) {
       res.status(500).json(err);

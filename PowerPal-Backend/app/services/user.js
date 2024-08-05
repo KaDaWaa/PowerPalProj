@@ -1,6 +1,11 @@
 const User = require("../models/user");
 const Post = require("../models/post");
 const bcrypt = require("bcrypt");
+const {
+  createFollowNotification,
+  deleteFollowNotification,
+  getFollowNotificationBySenderAndPostId,
+} = require("./notification");
 
 module.exports = {
   createUser: async (user) => {
@@ -71,12 +76,29 @@ module.exports = {
   followUser: async (userId, targetId) => {
     const user = await User.findById(userId);
     const target = await User.findById(targetId);
+    if (!user || !target) {
+      throw new Error("User not found");
+    }
+    console.log(userId, targetId);
     if (user.following.includes(targetId)) {
       user.following = user.following.filter((id) => id != targetId);
       target.followers = target.followers.filter((id) => id != userId);
+      const notif = await getFollowNotificationBySenderAndPostId(
+        userId,
+        targetId
+      );
+      if (notif) {
+        await addOrRemoveNotfication(targetId, notif._id);
+        await deleteFollowNotification(userId, targetId);
+      }
     } else {
       user.following.push(targetId);
       target.followers.push(userId);
+      const notif = createFollowNotification({
+        reciever: targetId,
+        sender: userId,
+      });
+      addOrRemoveNotfication(targetId, notif._id);
     }
     await user.save();
     return target.save();
@@ -106,15 +128,18 @@ module.exports = {
 
     return posts;
   },
-  addOrRemoveNotfication: async (userId, notificationId) => {
-    const user = await User(userId);
+  addOrRemoveNotification: async (userId, notificationId) => {
+    console.log(userId, notificationId);
+    const user = await User.findById(userId);
     if (!user) {
       throw new Error("User not found");
     }
     if (user.notifications.includes(notificationId)) {
+      console.log("removing");
       user.notifications = user.notifications.filter(
-        (id) => id != notificationId
+        (id) => id.toString() != notificationId.toString()
       );
+      console.log(user.notifications);
     } else {
       user.notifications.push(notificationId);
     }

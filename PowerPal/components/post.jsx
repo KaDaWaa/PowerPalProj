@@ -18,7 +18,7 @@ export default function Post({ postId, navigation }) {
   const { user } = useUserContext();
   const { apiUrl } = useAppContext();
   const [post, setPost] = useState(null);
-
+  const [isLiked, setIsLiked] = useState(false);
   const convertDate = (date) => {
     const currentDate = new Date();
     const seconds = Math.floor((currentDate - date) / 1000);
@@ -48,6 +48,9 @@ export default function Post({ postId, navigation }) {
       try {
         const response = await axios.get(`${apiUrl}/posts/${postId}`);
         setPost(response.data);
+        if (response.data.Likes.includes(user._id)) {
+          setIsLiked(true);
+        }
       } catch (error) {
         console.error(error);
       }
@@ -57,15 +60,24 @@ export default function Post({ postId, navigation }) {
 
   const handleLike = async () => {
     try {
-      await axios.post(`${apiUrl}/posts/like/${postId}`);
-      setPost((prevPost) => ({
-        ...prevPost, // Added this line to keep the rest of the post data
-        Likes: [...prevPost.Likes, { userId: user._id }], // Added this line to add the user to the Likes array
-      }));
+      const response = await axios.put(
+        `${apiUrl}/posts/like/${postId}/${user._id}`
+      );
+      console.log(response.data);
+      setPost(response.data);
     } catch (error) {
       console.error(error);
     }
   };
+  useEffect(() => {
+    if (post != null) {
+      if (post.Likes.includes(user._id)) {
+        setIsLiked(true);
+      } else {
+        setIsLiked(false);
+      }
+    }
+  }, [post]);
 
   const PostSkeleton = () => {
     return (
@@ -155,8 +167,15 @@ export default function Post({ postId, navigation }) {
         ))}
       </View>
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.likeButton} onPress={() => handleLike}>
-          <Icon2 name={false ? "heart" : "hearto"} size={25} color="#C74E53" />
+        <TouchableOpacity
+          style={styles.likeButton}
+          onPress={() => handleLike()}
+        >
+          <Icon2
+            name={isLiked ? "heart" : "hearto"}
+            size={25}
+            color="#C74E53"
+          />
         </TouchableOpacity>
         <Text style={styles.likes}>{post.Likes.length} likes </Text>
         <Text style={styles.footerTitle}>

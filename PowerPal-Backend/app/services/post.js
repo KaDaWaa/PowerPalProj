@@ -1,5 +1,14 @@
 const Post = require("../models/post");
-const User = require("../models/user");
+const Notification = require("../models/notification");
+const {
+  createLikeNotification,
+  createFollowNotification,
+  deleteLikeNotification,
+  getLikeNotificationBySenderAndPostId,
+} = require("./notification");
+
+const { addOrRemoveNotification } = require("./user");
+const user = require("./user");
 
 module.exports = {
   createPost: async (post) => {
@@ -28,10 +37,24 @@ module.exports = {
     if (!post) {
       return "Post not found";
     }
-    if (post.Likes.includes(userId)) {
+    const userLiked = post.Likes.includes(userId);
+
+    if (userLiked) {
       post.Likes = post.Likes.filter((id) => id != userId);
+      const notif = await getLikeNotificationBySenderAndPostId(userId, postId);
+      console.log(notif);
+      if (notif) {
+        await addOrRemoveNotification(notif.reciever, notif._id);
+        await deleteLikeNotification(notif._id);
+      }
     } else {
       post.Likes.push(userId);
+      const notif = await createLikeNotification({
+        reciever: post.userId,
+        sender: userId,
+        postId: postId,
+      });
+      await addOrRemoveNotification(notif.reciever, notif._id);
     }
     return post.save();
   },
