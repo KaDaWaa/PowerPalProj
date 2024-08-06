@@ -16,8 +16,8 @@ import { useState } from "react";
 
 export default function Max() {
   const [maxWeight, setMaxWeight] = useState(0);
-  const [reps, setReps] = useState(0);
-  const [weight, setWeight] = useState(0);
+  const [reps, setReps] = useState("");
+  const [weight, setWeight] = useState("");
 
   const calculateMax = () => {
     const weightInput = parseFloat(weight);
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     marginTop: 20,
-    //justifyContent: "space-around",
+    justifyContent: Platform.OS=="web"?"center":null,
     alignItems: "center",
     width: "80%",
   },
