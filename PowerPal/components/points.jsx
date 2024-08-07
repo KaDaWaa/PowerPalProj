@@ -138,6 +138,8 @@ export default function Points() {
         </View>
         
       </View>
+      <Text style={{textAlign:"center", fontWeight:"700",marginTop:10}}>More info:</Text>
+      <Text style={{textAlign:"center",marginTop:10}}>These formulas are used to help compare the strength levels of lifters regardless of sex or weightclass</Text>
       </View>
       </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
